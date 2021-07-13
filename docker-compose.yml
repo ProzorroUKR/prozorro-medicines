@@ -1,0 +1,44 @@
+---
+version: '3'
+
+services:
+    api:
+        build: .
+        command: python -m prozorro.medicines.api
+        environment:
+            MONGODB_URI: 'mongodb://root:example@mongo:27017/?replicaSet=rs0'
+            PYTHONUNBUFFERED: '1'
+            AUTH_KS_DIR: 'tests/auth_keys'
+            COMMITTEE: '[{"given_name": "Элфинстоун", "family_name": "Урхарт", "middle_name": "", "email": "e.urquart@sfs.gov.ua", "rnokpp": "0000000005", "edrpou": "00000005"}, {"given_name": "Руфус", "family_name": "Фадж", "middle_name": "", "email": "r.fudge@sfs.gov.ua", "rnokpp": "0000000006", "edrpou": "00000006"}, {"given_name": "Муфалда", "family_name": "Хмелкирк", "middle_name": "", "email": "m.hopkirk@sfs.gov.ua", "rnokpp": "0000000007", "edrpou": "00000007"}]'
+        ports:
+            - 80:80
+        volumes:
+            - ./src/prozorro:/app/prozorro
+            - ./tests:/prozorro/tests
+            - ./swagger:/swagger
+        depends_on:
+            - mongo
+
+    mongo:
+        image: 'bitnami/mongodb:latest'
+        environment:
+            MONGODB_ROOT_PASSWORD: example
+            MONGODB_REPLICA_SET_MODE: primary
+            MONGODB_REPLICA_SET_NAME: rs0
+            MONGODB_REPLICA_SET_KEY: replicaSetKey
+        ports:
+            - 27017:27017
+
+    mongo-express:
+        image: mongo-express
+        restart: always
+        depends_on:
+            - mongo
+        ports:
+            - 8081:8081
+        environment:
+            ME_CONFIG_MONGODB_ADMINUSERNAME: root
+            ME_CONFIG_MONGODB_ADMINPASSWORD: example
+            ME_CONFIG_MONGODB_SERVER: mongo
+        logging:
+            driver: "none"

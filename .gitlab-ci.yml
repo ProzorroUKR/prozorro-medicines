@@ -1,0 +1,83 @@
+stages:
+  - build
+  - publish
+  - deploy
+  - cleanup
+
+image: docker:18.09.9-git
+
+variables:
+  IMAGE: "medicines:$CI_COMMIT_SHORT_SHA"
+  IMAGE_TEST: "medicines:$CI_COMMIT_SHORT_SHA-test"
+
+build-new-image:
+  stage: build
+  tags:
+    - shell
+  script:
+    - make docker-build
+
+push-latest-image:
+  stage: publish
+  tags:
+    - shell
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  script:
+    - docker tag $IMAGE $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - master
+
+push-tagged-image:
+  stage: publish
+  tags:
+    - shell
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  script:
+    - docker tag $IMAGE $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  only:
+    - tags
+
+review:
+  stage: deploy
+  tags:
+    - shell
+  environment:
+    name: review/${CI_COMMIT_REF_SLUG}
+    action: start
+    url: http://api.${CI_COMMIT_REF_SLUG}.${K8S_DOMAIN}/api/1.0/registry
+    on_stop: stop_review
+    auto_stop_in: 1 month
+  variables:
+    TAG: $CI_COMMIT_REF_SLUG
+  script:
+    - helm --debug upgrade $CI_COMMIT_REF_SLUG --install helm/prozorro-medicines
+          --namespace dev-prozorro
+          --set prozorro-medicines.api.image.tag=$TAG
+          --wait
+  when: manual
+
+
+stop_review:
+  stage: deploy
+  script:
+    - helm delete $CI_COMMIT_REF_SLUG --purge
+  environment:
+    name: review/${CI_COMMIT_REF_SLUG}
+    action: stop
+  tags:
+    - shell
+  when: manual
+
+
+clenup-test-image:
+  stage: cleanup
+  tags:
+    - shell
+  script:
+    - docker rmi -f $IMAGE || true
+    - docker rmi -f $IMAGE_TEST || true
+  when: always

@@ -1,0 +1,15 @@
+tags:
+- Registry
+description: Get medicines registry
+operationId: get_registtry
+responses:
+  "200":
+    description: successful operation
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            api_version:
+              type: string
+              description: api version

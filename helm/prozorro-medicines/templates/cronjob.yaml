@@ -1,0 +1,39 @@
+{{- if .Values.cronjob -}}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "prozorro.medicines.fullname" . }}
+  labels:
+{{ include "prozorro.medicines.labels" . | indent 4 }}
+spec:
+ schedule: "{{ .Values.cronjob.schedule }}"
+ jobTemplate:
+  spec:
+   template:
+    spec:
+     {{- with .Values.imagePullSecrets }}
+       imagePullSecrets:
+         {{- toYaml . | nindent 8 }}
+     {{- end }}
+       restartPolicy: Never
+       containers:
+        - name: prozorro-medicines-crawler
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [ "python", "-m", "prozorro.medicines.crawler" ]
+          envFrom:
+            - secretRef:
+              name: {{ .Release.Name }}-medicines-secret
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+{{- end }}
