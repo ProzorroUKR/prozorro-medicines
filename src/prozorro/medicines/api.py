@@ -1,7 +1,7 @@
 from aiohttp import web
 from aiohttp_swagger import setup_swagger
 from prozorro import version
-from prozorro.medicines.middleware import request_id_middleware, request_unpack_params
+from prozorro.medicines.middleware import request_id_middleware, request_unpack_params, convert_response_to_json
 from prozorro.medicines.db import init_mongodb, cleanup_db_client
 from prozorro.medicines.logging import AccessLogger, setup_logging
 from prozorro.medicines.handlers import (
@@ -21,6 +21,7 @@ def create_application():
     app = web.Application(
         middlewares=(
             request_id_middleware,
+            convert_response_to_json,
             request_unpack_params,
         ),
         client_max_size=1024 ** 2 * 100

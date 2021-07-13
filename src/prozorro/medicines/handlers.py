@@ -1,6 +1,8 @@
 import logging
 from aiohttp.web import Response, HTTPNotFound
 from aiohttp_swagger import swagger_path
+from aiocache import cached
+from aiocache.serializers import JsonSerializer
 from collections import OrderedDict
 from prozorro import version as api_version
 from prozorro.medicines import db
@@ -20,6 +22,7 @@ async def get_version(request):
 
 
 @swagger_path('/swagger/registry.yaml')
+@cached(ttl=60, serializer=JsonSerializer())
 async def get_registry(request, name):
     registry = await db.get_registry(name)
     if registry is None:
@@ -28,4 +31,4 @@ async def get_registry(request, name):
             content_type="application/json"
         )
     registry["data"] = OrderedDict(registry["data"])
-    return json_response(registry)
+    return registry
