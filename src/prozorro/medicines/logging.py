@@ -71,9 +71,7 @@ def setup_logging():
 
 # custom aiohttp access logger with request-id added
 LOG_EXCLUDED = {
-    "/ping",  # scheduler ping
-    "/api/ping",  # api ping
-    "/api/metrics",  # metrics
+    "/api/1.0/ping",
 }
 
 

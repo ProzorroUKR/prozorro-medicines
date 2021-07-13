@@ -40,13 +40,13 @@ spec:
               protocol: TCP
           envFrom:
             - secretRef:
-              name: {{ .Release.Name }}-medicines-secret
+                name: {{ .Release.Name }}-medicines-secret
           livenessProbe:
             httpGet:
-              path: /api/ping
+              path: /api/1.0/ping
               port: http
           readinessProbe:
             httpGet:
-              path: /api/ping
+              path: /api/1.0/ping
               port: http
   

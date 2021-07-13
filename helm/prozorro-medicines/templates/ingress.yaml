@@ -9,7 +9,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ .fullName }}-ingress
+  name: {{ $fullName }}-ingress
   labels:
 {{ include "prozorro.medicines.labels" . | indent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -35,7 +35,7 @@ spec:
         {{- range .paths }}
           - path: {{ .path }}
             backend:
-              serviceName: {{ .fullName }}-{{ .service }}
+              serviceName: {{ $fullName }}-{{ .service }}
               servicePort: http
         {{- end }}
   {{- end }}

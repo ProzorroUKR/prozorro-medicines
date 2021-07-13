@@ -23,7 +23,7 @@ spec:
           command: [ "python", "-m", "prozorro.medicines.crawler" ]
           envFrom:
             - secretRef:
-              name: {{ .Release.Name }}-medicines-secret
+                name: {{ .Release.Name }}-medicines-secret
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

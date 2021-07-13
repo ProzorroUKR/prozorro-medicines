@@ -33,7 +33,7 @@ ingress:
     - host: medicines.latest.k8s.prozorro.gov.ua
       paths:
         - path: /
-          service: api-service
+          service: api
   tls: []
 
 imagePullSecrets:

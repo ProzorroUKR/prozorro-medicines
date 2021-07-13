@@ -4,7 +4,7 @@ stages:
   - deploy
   - cleanup
 
-image: docker:18.09.9-git
+image: docker-registry.prozorro.gov.ua/cdb/openprocurement.api/ci
 
 variables:
   IMAGE: "medicines:$CI_COMMIT_SHORT_SHA"
@@ -54,23 +54,28 @@ review:
   variables:
     TAG: $CI_COMMIT_REF_SLUG
   script:
-    - helm --debug upgrade $CI_COMMIT_REF_SLUG --install helm/prozorro-medicines
-          --namespace dev-prozorro
-          --set prozorro-medicines.api.image.tag=$TAG
-          --wait
+    - make dev-auth-secret
+    - make dev-config-secret
+    - make dev-update
   when: manual
+  only:
+    - master
 
 
 stop_review:
   stage: deploy
   script:
-    - helm delete $CI_COMMIT_REF_SLUG --purge
+    - make dev-auth-secret
+    - make dev-config-secret-delete
+    - make dev-auth-secret-delete
   environment:
     name: review/${CI_COMMIT_REF_SLUG}
     action: stop
   tags:
     - shell
   when: manual
+  only:
+    - master
 
 
 clenup-test-image:
