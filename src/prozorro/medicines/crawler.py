@@ -96,7 +96,6 @@ async def import_registry():
             # init parsing helpers
             registries = JSONRRegistries()
             xml_processor = XMLChunkProcessor(split_by="</doc>\r\n")
-
             # load data from <doc>..</doc> chunks
             count = 0
             async for data in resp.content.iter_chunked(1024 * 1024):

@@ -10,8 +10,6 @@ from pythonjsonlogger import jsonlogger
 from pythonjsonlogger.jsonlogger import merge_record_extra
 
 request_id_var = ContextVar('request_id')
-rnokpp_var = ContextVar('rnokpp')
-edrpou_var = ContextVar('edrpou')
 
 
 class CustomJsonFormatter(jsonlogger.JsonFormatter):
@@ -49,8 +47,6 @@ def setup_logging():
     def custom_factory(*args, **kwargs):
         record = base_factory(*args, **kwargs)
         record.request_id = request_id_var.get("")
-        record.rnokpp = rnokpp_var.get("")
-        record.edrpou = edrpou_var.get("")
         return record
 
     # setting extended factory instead the default
