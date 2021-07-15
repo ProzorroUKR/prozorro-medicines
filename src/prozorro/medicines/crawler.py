@@ -48,10 +48,12 @@ class JSONRRegistries:
     def update(self, node):
         mnn = node.find('mnn').text
         if mnn is not None:
+            mnn = mnn.replace('*', '')
             self.inn[mnn.lower()] = mnn
 
         atc1 = node.find('atc1').text
         if atc1 is not None:
+            atc1 = atc1.replace('*', '')
             self.atc[atc1] = atc1
 
             if mnn is not None:
