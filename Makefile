@@ -1,7 +1,6 @@
 IMAGE ?= "medicines:latest"
 IMAGE_TEST ?= "medicines:test"
-GIT_STAMP ?= $(shell git describe)
-
+GIT_STAMP ?= $(shell git describe --tags)
 
 docker-build: $(FETCH_TEST_DATA)
 	docker build --build-arg version=$(GIT_STAMP) -t $(IMAGE) .
