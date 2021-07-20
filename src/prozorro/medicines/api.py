@@ -57,7 +57,7 @@ if __name__ == "__main__":
     web.run_app(
         application,
         host="0.0.0.0",
-        port=80,
+        port=8080,
         access_log_class=AccessLogger,
         print=None
     )

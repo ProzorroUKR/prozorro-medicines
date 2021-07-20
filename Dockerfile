@@ -6,7 +6,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY swagger /swagger
-EXPOSE 80
+EXPOSE 8080
 
 FROM base as test_base
 
