@@ -42,7 +42,7 @@ if __name__ == "__main__":
             dsn=SENTRY_DSN,
             integrations=[AioHttpIntegration()]
         )
-    logger.info("Starting app on 0.0.0.0:80")
+    logger.info("Starting app on 0.0.0.0:8080")
 
     application = create_application()
 
