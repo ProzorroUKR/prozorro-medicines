@@ -77,8 +77,9 @@ class AccessLogger(AbstractAccessLogger):
         remote = request.headers.get('X-Forwarded-For', request.remote)
         refer = request.headers.get('Referer', '-')
         user_agent = request.headers.get('User-Agent', '-')
+        user = request.headers.get('Authorization', '-')
         if request.path not in LOG_EXCLUDED:
             self.logger.info(f'{remote} '
                              f'"{request.method} {request.path} {response.status}'
-                             f'{response.body_length} {refer} {user_agent} '
+                             f'{response.body_length} {refer} {user} {user_agent} '
                              f'{time:.6f}s"')
