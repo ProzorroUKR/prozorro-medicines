@@ -82,8 +82,8 @@ class JSONRRegistries:
 
 @async_retry(tries=100, delay=1, backoff=2, max_delay=60)
 async def import_registry():
-    async with aiohttp.ClientSession() as session:
-        async with session.get(REGISTRY_XML_URL, trust_env=True) as resp:
+    async with aiohttp.ClientSession(trust_env=True) as session:
+        async with session.get(REGISTRY_XML_URL,) as resp:
             if resp.status != 200:
                 raise AssertionError(f"Unsuccessful response {resp.status} "
                                      f"{(await resp.text(encoding=XML_ENCODING))[:200]}")
